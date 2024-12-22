@@ -1,1 +1,134 @@
-<link rel="stylesheet" href="/yaaja/index.js">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirim Pesan Anonim</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Arial", sans-serif;
+            background: linear-gradient(135deg, #ff6ec4, #7873f5);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            background: #fff;
+            color: #333;
+            border-radius: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ff6ec4;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #ff6ec4;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #ff6ec4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #e05bb5;
+        }
+
+        .message-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .message-item {
+            background: #f9f9f9;
+            color: #333;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kirim Pesan Anonim</h1>
+        <form id="messageForm">
+            <input type="text" id="username" placeholder="Masukkan username..." required>
+            <textarea id="message" placeholder="Tulis pesan Anda..." required></textarea>
+            <button type="submit">Kirim</button>
+        </form>
+        <div class="message-list" id="messagesList">
+            <h3>Pesan Masuk:</h3>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = "http://localhost:5000";
+
+        document.getElementById("messageForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const message = document.getElementById("message").value;
+
+            try {
+                const response = await fetch(`${apiUrl}/send-message`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, message }),
+                });
+                const data = await response.json();
+                alert(data.message || "Pesan berhasil dikirim!");
+                document.getElementById("message").value = "";
+                loadMessages(username);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+
+        async function loadMessages(username) {
+            try {
+                const response = await fetch(`${apiUrl}/messages/${username}`);
+                const messages = await response.json();
+                const messagesList = document.getElementById("messagesList");
+                messagesList.innerHTML = messages
+                    .map(msg => `<div class="message-item">${msg.message}</div>`)
+                    .join("");
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+    </script>
+</body>
+</html>
