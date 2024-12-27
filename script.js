@@ -1,7 +1,3 @@
-Berikut kode JavaScript yang telah diperbaiki:
-
-Kode yang Diperbaiki
-```
 const chatBox = document.getElementById("chat-box");
 
 // Fungsi untuk menambahkan pesan
@@ -29,14 +25,14 @@ async function sendMessage() {
 
   try {
     // Kirim permintaan ke API OpenAI
-    const response = await fetch("(link unavailable)", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer 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`, // Ganti dengan API key OpenAI Anda
+        "Authorization": `Bearer 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`, // api
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo", // Anda bisa mengganti model jika perlu
+        model: "gpt-4-turbo", // Anda bisa mengganti model jika perlu
         messages: [{ role: "user", content: message }],
       }),
     });
