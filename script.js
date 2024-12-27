@@ -1,67 +1,50 @@
-require('dotenv').config();
-const axios = require('axios');
+const chatBox = document.getElementById("chat-box");
 
-// Ambil API Key dari environment variables
-const apiKey = process.env.API_KEY;
-const apiEndpoint = 'https://api.openai.com/v1/completions';
-
-// Validasi API Key
-if (!apiKey) {
-    console.error("API Key tidak ditemukan. Pastikan file .env sudah diatur dengan benar.");
-    process.exit(1);
+function appendMessage(message, sender) {
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `chat-message ${sender}`;
+  messageDiv.textContent = message;
+  chatBox.appendChild(messageDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Ambil prompt dari CLI atau gunakan default jika kosong
-const prompt = process.argv.slice(2).join(" ") || "Halo, AI sayang";
+async function sendMessage() {
+  const userInput = document.getElementById("user-input");
+  const message = userInput.value.trim();
 
-// Validasi prompt
-if (!prompt) {
-    console.error("Prompt tidak boleh kosong. Masukkan teks setelah menjalankan skrip.");
-    process.exit(1);
+  if (!message) return;
+
+  // Tampilkan pesan pengguna
+  appendMessage(message, "user");
+  userInput.value = "";
+
+  // Tampilkan "sedang mengetik..."
+  appendMessage("Sedang mengetik...", "bot");
+
+  try {
+    // Kirim permintaan ke API OpenAI
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `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`, // Ganti dengan API key OpenAI Anda
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo", // Anda bisa mengganti model jika perlu
+        messages: [{ role: "user", content: message }],
+      }),
+    });
+
+    const data = await response.json();
+
+    // Hapus pesan "sedang mengetik..."
+    chatBox.lastChild.remove();
+
+    // Tampilkan respons dari bot
+    appendMessage(data.choices[0].message.content, "bot");
+  } catch (error) {
+    console.error("Error:", error);
+    chatBox.lastChild.remove();
+    appendMessage("Maaf, terjadi kesalahan. Coba lagi nanti.", "bot");
+  }
 }
-
-// Fungsi untuk mendapatkan respons dari API OpenAI
-async function getAIResponse(prompt) {
-    const konfigurasi = {
-        method: 'post',
-        url: apiEndpoint,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-        },
-        timeout: 10000, // Timeout 10 detik
-        data: {
-            model: "text-davinci-003",
-            prompt: prompt,
-            max_tokens: 2048,
-            temperature: 1,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-        },
-    };
-
-    try {
-        console.log("Mengirim permintaan ke API...");
-        const respons = await axios(konfigurasi);
-
-        // Validasi respons
-        if (respons.data.choices && respons.data.choices.length > 0) {
-            console.log("Respons berhasil diterima:");
-            console.log(respons.data.choices[0].text.trim());
-        } else {
-            console.error("Respons tidak mengandung data yang valid.");
-        }
-    } catch (error) {
-        // Penanganan error
-        if (error.response) {
-            console.error(`Error HTTP ${error.response.status}: ${error.response.statusText}`);
-            console.error("Detail Error:", error.response.data);
-        } else {
-            console.error("Error lain:", error.message);
-        }
-    }
-}
-
-// Jalankan fungsi dengan prompt
-getAIResponse(prompt);
