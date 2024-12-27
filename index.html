@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My OpenAI Project</title>
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>My OpenAI Project</h1>
-    <p>Klik tombol di bawah untuk memulai:</p>
-    <button onclick="runScript()">Jalankan Script</button>
-    <p id="output"></p>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3>Chatbot</h3>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message bot-message">Halo! Ada yang bisa saya bantu?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="userInput" placeholder="Ketik pesan..." />
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
