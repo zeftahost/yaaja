@@ -1,5 +1,10 @@
+Berikut kode JavaScript yang telah diperbaiki:
+
+Kode yang Diperbaiki
+```
 const chatBox = document.getElementById("chat-box");
 
+// Fungsi untuk menambahkan pesan
 function appendMessage(message, sender) {
   const messageDiv = document.createElement("div");
   messageDiv.className = `chat-message ${sender}`;
@@ -8,6 +13,7 @@ function appendMessage(message, sender) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Fungsi untuk mengirim pesan
 async function sendMessage() {
   const userInput = document.getElementById("user-input");
   const message = userInput.value.trim();
@@ -23,11 +29,11 @@ async function sendMessage() {
 
   try {
     // Kirim permintaan ke API OpenAI
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("(link unavailable)", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `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`, // Ganti dengan API key OpenAI Anda
+        Authorization: `Bearer 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`, // Ganti dengan API key OpenAI Anda
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo", // Anda bisa mengganti model jika perlu
@@ -40,7 +46,6 @@ async function sendMessage() {
     // Hapus pesan "sedang mengetik..."
     chatBox.lastChild.remove();
 
-    // Tampilkan respons dari bot
     appendMessage(data.choices[0].message.content, "bot");
   } catch (error) {
     console.error("Error:", error);
@@ -48,3 +53,5 @@ async function sendMessage() {
     appendMessage("Maaf, terjadi kesalahan. Coba lagi nanti.", "bot");
   }
 }
+
+document.getElementById("send-button").addEventListener("click", sendMessage);
