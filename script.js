@@ -29,7 +29,7 @@ async function sendMessage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer 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`, // api
+        "Authorization": `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`, // api
       },
       body: JSON.stringify({
         model: "gpt-4-turbo", // Anda bisa mengganti model jika perlu
